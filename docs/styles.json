@@ -1,0 +1,68 @@
+{
+  "themeName": "SMART AGEN",
+  "version": "1.0.0",
+  "colors": {
+    "background": {
+      "main": "#F1F5F9",
+      "sidebar": "#FFFFFF",
+      "card": "#FFFFFF"
+    },
+    "brand": {
+      "primary": "#1C4ED8",
+      "secondary": "#64748B"
+    },
+    "regionCards": {
+      "sumsel": {
+        "bg": "#10B981",
+        "accent": "#059669"
+      },
+      "lampung": {
+        "bg": "#F59E0B",
+        "accent": "#D97706"
+      },
+      "jambi": {
+        "bg": "#0EA5E9",
+        "accent": "#0284C7"
+      },
+      "bengkulu": {
+        "bg": "#F43F5E",
+        "accent": "#E11D48"
+      },
+      "bangka": {
+        "bg": "#9929EA",
+        "accent": "#B153D7"
+      }
+    },
+    "status": {
+      "delivered": { "bg": "#DCFCE7", "text": "#166534" },
+      "inTransit": { "bg": "#DBEAFE", "text": "#1E40AF" },
+      "loading": { "bg": "#FEF3C7", "text": "#92400E" },
+      "delayed": { "bg": "#FEE2E2", "text": "#991B1B" }
+    },
+    "text": {
+      "primary": "#111827",
+      "secondary": "#6B7280",
+      "onColor": "#FFFFFF"
+    }
+  },
+  "typography": {
+    "fontFamily": "'Inter', sans-serif",
+    "baseSize": "14px",
+    "headings": {
+      "h1": { "size": "24px", "weight": "700" },
+      "h2": { "size": "18px", "weight": "600" }
+    }
+  },
+  "spacing": {
+    "containerPadding": "24px",
+    "cardGap": "20px",
+    "borderRadius": {
+      "small": "4px",
+      "medium": "8px",
+      "large": "12px"
+    }
+  },
+  "shadows": {
+    "card": "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)"
+  }
+}

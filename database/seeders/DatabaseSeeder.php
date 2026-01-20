@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->count(5000)->create();
+        // User::factory()->count(5000)->create();
         $this->call([
             PermissionGroupSeeder::class,
             PermissionSeeder::class,

@@ -13,8 +13,12 @@ class PermissionGroupSeeder extends Seeder
     public function run(): void
     {
         $groups = [
-            ['name' => 'User Management', 'description' => 'Permissions related to user management', 'order' => 1],
-            ['name' => 'Role Management', 'description' => 'Permissions related to role management', 'order' => 2],
+            ['name' => 'Area Management', 'description' => 'Permissions related to area management', 'order' => 1],
+            ['name' => 'Agency Management', 'description' => 'Permissions related to agency management', 'order' => 2],
+            ['name' => 'Fleet Management', 'description' => 'Permissions related to fleet management', 'order' => 3],
+            ['name' => 'Driver Management', 'description' => 'Permissions related to driver management', 'order' => 4],
+            ['name' => 'User Management', 'description' => 'Permissions related to user management', 'order' => 5],
+            ['name' => 'Role Management', 'description' => 'Permissions related to role management', 'order' => 6],
             ['name' => 'Permission Management', 'description' => 'Permissions related to permission management', 'order' => 3],
             ['name' => 'Menu Management', 'description' => 'Permissions related to menu management', 'order' => 4],
             ['name' => 'Route Access', 'description' => 'Permissions related to route access management', 'order' => 5],

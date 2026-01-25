@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
             ])
             ->log('User logged in');
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('admin.dashboard.index', absolute: false));
     }
 
     /**

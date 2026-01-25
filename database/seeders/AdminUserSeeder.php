@@ -24,6 +24,28 @@ class AdminUserSeeder extends Seeder
         );
         $superAdmin->assignRole('super-admin');
 
+        $manager_sumsel = User::updateOrCreate(
+            ['email' => 'manager_sumsel@example.com'],
+            [
+                'name' => 'Manager Sumsel',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'is_active' => true,
+            ]
+        );
+        $manager_sumsel->assignRole('manager');
+
+        $asmen_sumsel = User::updateOrCreate(
+            ['email' => 'asmen_sumsel@example.com'],
+            [
+                'name' => 'Asmen Sumsel',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+                'is_active' => true,
+            ]
+        );
+        $asmen_sumsel->assignRole('asmen');
+
         $admin = User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -35,15 +57,15 @@ class AdminUserSeeder extends Seeder
         );
         $admin->assignRole('admin');
 
-        $user = User::updateOrCreate(
-            ['email' => 'user@example.com'],
+        $operator = User::updateOrCreate(
+            ['email' => 'operator@example.com'],
             [
-                'name' => 'Regular User',
+                'name' => 'Operator User',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
                 'is_active' => true,
             ]
         );
-        $user->assignRole('user');
+        $operator->assignRole('operator');
     }
 }

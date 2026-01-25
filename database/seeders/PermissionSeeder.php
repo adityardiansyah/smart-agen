@@ -16,6 +16,43 @@ class PermissionSeeder extends Seeder
         $groups = PermissionGroup::all()->keyBy('name');
 
         $permissions = [
+            // Data Area
+            [
+                'group' => 'Data Area',
+                'permissions' => [
+                    ['name' => 'areas.view', 'description' => 'View areas list'],
+                    ['name' => 'areas.create', 'description' => 'Create new areas'],
+                    ['name' => 'areas.edit', 'description' => 'Edit existing areas'],
+                    ['name' => 'areas.delete', 'description' => 'Delete areas'],
+                ],
+            ],
+            [
+                'group' => 'Data Agen',
+                'permissions' => [
+                    ['name' => 'agencies.view', 'description' => 'View agencies list'],
+                    ['name' => 'agencies.create', 'description' => 'Create new agencies'],
+                    ['name' => 'agencies.edit', 'description' => 'Edit existing agencies'],
+                    ['name' => 'agencies.delete', 'description' => 'Delete agencies'],
+                ],
+            ],
+            [
+                'group' => 'Data Armada',
+                'permissions' => [
+                    ['name' => 'fleets.view', 'description' => 'View fleets list'],
+                    ['name' => 'fleets.create', 'description' => 'Create new fleets'],
+                    ['name' => 'fleets.edit', 'description' => 'Edit existing fleets'],
+                    ['name' => 'fleets.delete', 'description' => 'Delete fleets'],
+                ],
+            ],
+            [
+                'group' => 'Data Supir',
+                'permissions' => [
+                    ['name' => 'drivers.view', 'description' => 'View drivers list'],
+                    ['name' => 'drivers.create', 'description' => 'Create new drivers'],
+                    ['name' => 'drivers.edit', 'description' => 'Edit existing drivers'],
+                    ['name' => 'drivers.delete', 'description' => 'Delete drivers'],
+                ],
+            ],
             // User Management
             [
                 'group' => 'User Management',

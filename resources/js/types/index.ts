@@ -156,6 +156,83 @@ export interface Activity {
     subject?: Record<string, unknown> | null;
 }
 
+export interface Area {
+    id: number;
+    name: string;
+    code: string;
+    formatted_code: string;
+    is_active: boolean;
+    agencies_count?: number;
+    users_count?: number;
+    agencies?: Agency[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Agency {
+    id: number;
+    area_id: number;
+    region_id: number;
+    name: string;
+    address: string;
+    cylinder_count: number;
+    daily_allocation: number;
+    is_active: boolean;
+    area?: Area;
+    fleets_count?: number;
+    active_fleets_count?: number;
+    fleets?: Fleet[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Fleet {
+    id: number;
+    agency_id: number;
+    license_plate: string;
+    formatted_license_plate: string;
+    year_manufacture: number;
+    keur_number: string;
+    keur_expiry: string;
+    stnk_expiry: string;
+    vehicle_expiry: string;
+    is_active: boolean;
+    keur_status: string;
+    vehicle_age_status: string;
+    vehicle_age: number;
+    agency?: Agency;
+    region?: Region;
+    drivers_count?: number;
+    active_drivers_count?: number;
+    drivers?: Driver[];
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Region {
+    id: number;
+    area_id: number;
+    city: string;
+    region_sbm: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Driver {
+    id: number;
+    fleet_id: number;
+    name: string;
+    age: number;
+    sim_expiry: string;
+    sim_expiry_date?: string;
+    is_active: boolean;
+    sim_status: string;
+    days_until_sim_expiry: number;
+    fleet?: Fleet;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface RouteAccess {
     id: number;
     route_name: string;

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
+use App\Http\Resources\AreaResource;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
+use App\Models\Area;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -25,7 +27,7 @@ class UserController extends Controller
      */
     public function index(Request $request): Response
     {
-        $query = User::with(['roles', 'permissions']);
+        $query = User::with(['roles', 'permissions', 'areas']);
 
         $query = $this->applyTableQuery($query, $request, [
             'searchColumns' => ['name', 'email'],
@@ -77,6 +79,7 @@ class UserController extends Controller
             ],
             'page_data' => [
                 'roles' => Role::all(),
+                'areas' => Area::all(),
                 'permissions' => Permission::with('group')->get()
                     ->groupBy('permission_group_id'),
             ]
@@ -101,6 +104,10 @@ class UserController extends Controller
 
         if ($request->permissions) {
             $user->syncPermissions(Permission::whereIn('id', $request->permissions)->pluck('name'));
+        }
+
+        if ($request->areas) {
+            $user->areas()->sync($request->areas);
         }
 
         return redirect()
@@ -152,8 +159,10 @@ class UserController extends Controller
                 'roles' => Role::all(),
                 'permissions' => Permission::with('group')->get()
                     ->groupBy('permission_group_id'),
+                'areas' => Area::all(),
                 'userRoles' => $user->roles->pluck('id'),
                 'userPermissions' => $user->permissions->pluck('id'),
+                'userAreas' => $user->areas->pluck('id'),
             ]
         ]);
     }
@@ -181,6 +190,10 @@ class UserController extends Controller
 
         if ($request->has('permissions')) {
             $user->syncPermissions(Permission::whereIn('id', $request->permissions)->pluck('name'));
+        }
+
+        if ($request->has('areas')) {
+            $user->areas()->sync($request->areas);
         }
 
         return redirect()

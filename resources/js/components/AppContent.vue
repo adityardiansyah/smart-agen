@@ -12,10 +12,10 @@ const className = computed(() => props.class);
 </script>
 
 <template>
-    <SidebarInset v-if="props.variant === 'sidebar'" :class="className" class="main-gradient-bg">
+    <SidebarInset v-if="props.variant === 'sidebar'" :class="className" class="main-gradient-bg bg-bg-main">
         <slot />
     </SidebarInset>
-    <main v-else class="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-4" :class="className">
+    <main v-else class="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-4 bg-bg-main" :class="className">
         <slot />
     </main>
 </template>

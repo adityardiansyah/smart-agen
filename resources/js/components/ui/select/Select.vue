@@ -46,11 +46,11 @@ const emit = defineEmits<{
     'update:modelValue': [value: string | number | null];
 }>();
 
-// Convert empty string values to special NONE_VALUE for radix-vue compatibility
+// Convert empty/null/undefined values to special NONE_VALUE for radix-vue compatibility
 const normalizedOptions = computed(() => {
     return props.options?.map(option => ({
         ...option,
-        value: option.value === '' ? NONE_VALUE : option.value,
+        value: (option.value === '' || option.value === null || option.value === undefined) ? NONE_VALUE : option.value,
     }));
 });
 
@@ -59,7 +59,7 @@ const normalizedGroups = computed(() => {
         ...group,
         options: group.options.map(option => ({
             ...option,
-            value: option.value === '' ? NONE_VALUE : option.value,
+            value: (option.value === '' || option.value === null || option.value === undefined) ? NONE_VALUE : option.value,
         })),
     }));
 });
@@ -106,6 +106,7 @@ const handleValueChange = (value: string) => {
                     <ChevronUp class="h-4 w-4" />
                 </SelectScrollUpButton>
                 <SelectViewport class="p-1 h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]">
+                    <slot />
                     <!-- Simple options -->
                     <template v-if="normalizedOptions">
                         <SelectItem

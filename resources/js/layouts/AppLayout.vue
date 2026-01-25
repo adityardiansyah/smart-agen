@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ToastNotification from '@/components/ToastNotification.vue';
 import AppHeaderLayout from '@/layouts/app/AppHeaderLayout.vue';
 import AppSidebarLayout from '@/layouts/app/AppSidebarLayout.vue';
 import type { BreadcrumbItem } from '@/types';
@@ -31,4 +32,5 @@ const LayoutComponent = computed(() => {
     <component :is="LayoutComponent" :breadcrumbs="breadcrumbs">
         <slot />
     </component>
+    <ToastNotification />
 </template>

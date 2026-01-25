@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { confirmed, email as emailRule, minLength, required, useValidation } from '@/composables/useValidation';
 import AppLayout from '@/layouts/AppLayout.vue';
-import type { BreadcrumbItem, Permission, Role, User } from '@/types';
+import type { Area, BreadcrumbItem, Permission, Role, User } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
@@ -25,8 +25,10 @@ const props = defineProps<{
         user: User;
         roles: Role[];
         permissions: Record<string, Permission[]>;
+        areas: Area[];
         userRoles: number[];
         userPermissions: number[];
+        userAreas: number[];
     };
 }>();
 
@@ -38,6 +40,7 @@ const form = useForm({
     is_active: props.page_data.user.is_active,
     roles: [...props.page_data.userRoles],
     permissions: [...props.page_data.userPermissions],
+    areas: [...props.page_data.userAreas],
 });
 
 // Create a reactive data object for validation
@@ -100,8 +103,18 @@ const togglePermission = (permissionId: number) => {
     }
 };
 
+const toggleArea = (areaId: number) => {
+    const index = form.areas.indexOf(areaId);
+    if (index === -1) {
+        form.areas.push(areaId);
+    } else {
+        form.areas.splice(index, 1);
+    }
+};
+
 const isRoleSelected = (roleId: number) => form.roles.includes(roleId);
 const isPermissionSelected = (permissionId: number) => form.permissions.includes(permissionId);
+const isAreaSelected = (areaId: number) => form.areas.includes(areaId);
 
 const permissionGroups = computed(() => {
     return Object.entries(props.page_data.permissions).map(([groupId, permissions]) => ({
@@ -215,6 +228,25 @@ const isGroupAllSelected = (permissions: Permission[]) => {
                             </div>
                         </div>
                         <InputError :message="form.errors.roles" />
+                    </CardContent>
+                </Card>
+
+                <!-- Areas -->
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Areas Access</CardTitle>
+                        <CardDescription>Assign areas this user can access (Required for Operators)</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+                            <div v-for="area in page_data.areas" :key="area.id" class="flex items-center gap-2">
+                                <Checkbox :id="`area-${area.id}`" :checked="isAreaSelected(area.id)" @update:checked="toggleArea(area.id)" />
+                                <Label :for="`area-${area.id}`" class="cursor-pointer">
+                                    {{ area.name }}
+                                </Label>
+                            </div>
+                        </div>
+                        <InputError :message="form.errors.areas" />
                     </CardContent>
                 </Card>
 

@@ -30,7 +30,7 @@ function selectTheme(color: ThemeColor) {
                 :class="[
                     themeColor === theme.name
                         ? 'border-primary bg-accent shadow-md'
-                        : 'border-border bg-card hover:border-muted-foreground/50 hover:bg-accent/50',
+                        : 'border-input bg-card hover:border-muted-foreground/50 hover:bg-accent/50',
                 ]"
             >
                 <!-- Color preview circle -->
@@ -85,7 +85,7 @@ function selectTheme(color: ThemeColor) {
                 <span class="text-xs text-muted-foreground">Primary</span>
                 <div class="ml-2 h-3 w-3 rounded-full bg-accent"></div>
                 <span class="text-xs text-muted-foreground">Accent</span>
-                <div class="ml-2 h-3 w-3 rounded border border-border bg-card"></div>
+                <div class="ml-2 h-3 w-3 rounded border border-input bg-card"></div>
                 <span class="text-xs text-muted-foreground">Card</span>
             </div>
         </div>

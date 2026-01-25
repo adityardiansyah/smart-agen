@@ -167,8 +167,10 @@ Menu untuk menambahkan atau memperbarui data armada dan pengemudi.
 - Nomor Polisi Armada
 - Tahun Pembuatan Armada
 - Nomor Dokumen KEUR
+- Dokumen KEUR
 - Masa Berlaku KEUR
 - Masa Berlaku STNK
+- Dokumen STNK
 - Masa Habis Kendaraan
 
 **Data Supir**
@@ -176,6 +178,7 @@ Menu untuk menambahkan atau memperbarui data armada dan pengemudi.
 - Nama Supir
 - Umur
 - Masa Berlaku SIM
+- Dokumen SIM
 
 #### Validasi Data
 

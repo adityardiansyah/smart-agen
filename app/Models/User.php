@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\LogsActivity;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -72,5 +73,47 @@ class User extends Authenticatable implements MustVerifyEmail
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Get areas assigned to this user.
+     */
+    public function areas(): BelongsToMany
+    {
+        return $this->belongsToMany(Area::class)
+            ->withPivot('assigned_by', 'assigned_at')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if user has access to specific area.
+     */
+    public function hasAreaAccess(int $areaId): bool
+    {
+        if ($this->isSuperAdmin() || $this->hasRole(['manager', 'asmen', 'admin'])) {
+            return true;
+        }
+
+        return $this->areas()->where('areas.id', $areaId)->exists();
+    }
+
+    /**
+     * Get accessible areas for this user.
+     */
+    public function getAccessibleAreas()
+    {
+        if ($this->isSuperAdmin() || $this->hasRole(['manager', 'asmen', 'admin'])) {
+            return Area::all();
+        }
+
+        return $this->areas;
+    }
+
+    /**
+     * Get first area assigned to user (for default selection).
+     */
+    public function getFirstArea()
+    {
+        return $this->areas()->first() ?? Area::first();
     }
 }

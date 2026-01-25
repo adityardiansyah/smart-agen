@@ -19,6 +19,11 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             MenuSeeder::class,
             AdminUserSeeder::class,
+            AreaSeeder::class,
+            AreaUserSeeder::class,
+            AgencySeeder::class,
+            FleetSeeder::class,
+            DriverSeeder::class,
         ]);
     }
 }

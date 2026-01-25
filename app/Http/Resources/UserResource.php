@@ -24,6 +24,7 @@ class UserResource extends JsonResource
             'updated_at' => $this->updated_at?->toISOString(),
             'roles' => RoleResource::collection($this->whenLoaded('roles')),
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+            'areas' => AreaResource::collection($this->whenLoaded('areas')),
         ];
     }
 }

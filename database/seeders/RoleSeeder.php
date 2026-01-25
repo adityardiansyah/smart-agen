@@ -24,18 +24,28 @@ class RoleSeeder extends Seeder
             ['name' => 'admin', 'guard_name' => 'web'],
             ['name' => 'admin', 'guard_name' => 'web']
         );
+        $manager = Role::updateOrCreate(
+            ['name' => 'manager', 'guard_name' => 'web'],
+            ['name' => 'manager', 'guard_name' => 'web']
+        );
+        $asmen = Role::updateOrCreate(
+            ['name' => 'asmen', 'guard_name' => 'web'],
+            ['name' => 'asmen', 'guard_name' => 'web']
+        );
 
         // Assign all permissions to admin role
         $allPermissions = Permission::all();
         $admin->syncPermissions($allPermissions);
-
+        $manager->syncPermissions($allPermissions);
+        $asmen->syncPermissions($allPermissions);
+        
         // Create User role with limited permissions
-        $user = Role::updateOrCreate(
-            ['name' => 'user', 'guard_name' => 'web'],
-            ['name' => 'user', 'guard_name' => 'web']
+        $operator = Role::updateOrCreate(
+            ['name' => 'operator', 'guard_name' => 'web'],
+            ['name' => 'operator', 'guard_name' => 'web']
         );
+        $operator->syncPermissions([]);
 
         // Users can only view their own profile (no admin permissions)
-        $user->syncPermissions([]);
     }
 }

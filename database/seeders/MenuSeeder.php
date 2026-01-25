@@ -22,6 +22,50 @@ class MenuSeeder extends Seeder
             ]
         );
 
+        // Area Section - parent menu
+        $area = Menu::updateOrCreate(
+            ['name' => 'Data Area'],
+            [
+                'icon' => 'map',
+                'order' => 2,
+                'is_active' => true,
+                'permission_name' => 'areas.view',
+            ]
+        );
+
+        // Agency Section - parent menu
+        $agency = Menu::updateOrCreate(
+            ['name' => 'Data Agen'],
+            [
+                'icon' => 'building',
+                'order' => 3,
+                'is_active' => true,
+                'permission_name' => 'agencies.view',
+            ]
+        );
+
+        // Fleet Section - parent menu
+        $fleet = Menu::updateOrCreate(
+            ['name' => 'Data Armada'],
+            [
+                'icon' => 'car',
+                'order' => 4,
+                'is_active' => true,
+                'permission_name' => 'fleets.view',
+            ]
+        );
+
+        // Driver Section - parent menu
+        $driver = Menu::updateOrCreate(
+            ['name' => 'Data Supir'],
+            [
+                'icon' => 'person',
+                'order' => 5,
+                'is_active' => true,
+                'permission_name' => 'drivers.view',
+            ]
+        );
+
         // Admin Section - parent menu
         $admin = Menu::updateOrCreate(
             ['name' => 'Administration'],

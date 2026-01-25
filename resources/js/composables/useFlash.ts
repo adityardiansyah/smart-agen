@@ -58,21 +58,24 @@ export function useFlash() {
     const watchFlash = () => {
         watch(
             () => page.props.flash,
-            (newFlash) => {
-                if (newFlash.success) {
-                    addToast('success', newFlash.success);
-                }
-                if (newFlash.error) {
-                    addToast('error', newFlash.error);
-                }
-                if (newFlash.warning) {
-                    addToast('warning', newFlash.warning);
-                }
-                if (newFlash.info) {
-                    addToast('info', newFlash.info);
+            (newFlash, oldFlash) => {
+                // Process flash messages only on initial load or when they change
+                if (!oldFlash || JSON.stringify(newFlash) !== JSON.stringify(oldFlash)) {
+                    if (newFlash?.success) {
+                        addToast('success', newFlash.success);
+                    }
+                    if (newFlash?.error) {
+                        addToast('error', newFlash.error);
+                    }
+                    if (newFlash?.warning) {
+                        addToast('warning', newFlash.warning);
+                    }
+                    if (newFlash?.info) {
+                        addToast('info', newFlash.info);
+                    }
                 }
             },
-            { immediate: true },
+            { immediate: true, deep: true },
         );
     };
 

@@ -28,7 +28,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Log in to your account" description="Enter your email and password below to log in">
+    <AuthBase title="Selamat Datang" description="Masukan email dan password untuk masuk">
         <Head title="Log in" />
 
         <div v-if="status" class="mb-4 rounded-smart-sm bg-status-delivered p-2 text-center text-sm font-medium text-status-delivered-text">
@@ -38,7 +38,7 @@ const submit = () => {
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email" class="font-medium text-text-primary">Email address</Label>
+                    <Label for="email" class="font-medium text-text-primary">Email</Label>
                     <Input
                         id="email"
                         type="email"
@@ -62,7 +62,7 @@ const submit = () => {
                             class="text-sm text-brand-primary hover:text-brand-primary/80"
                             tabindex="5"
                         >
-                            Forgot password?
+                            Lupa password?
                         </TextLink>
                     </div>
                     <Input
@@ -81,20 +81,17 @@ const submit = () => {
                 <div class="flex items-center justify-between" tabindex="3">
                     <Label for="remember" class="flex items-center space-x-3 text-text-primary">
                         <Checkbox id="remember" v-model:checked="form.remember" tabindex="4" />
-                        <span>Remember me</span>
+                        <span>Ingat saya</span>
                     </Label>
                 </div>
 
                 <Button type="submit" class="mt-4 w-full" variant="default" size="default" tabindex="4" :disabled="form.processing">
                     <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
-                    Log in
+                    Masuk
                 </Button>
             </div>
 
-            <div class="text-center text-sm text-text-secondary">
-                Don't have an account?
-                <TextLink :href="route('register')" :tabindex="5" class="text-brand-primary hover:text-brand-primary/80">Sign up</TextLink>
-            </div>
+
         </form>
     </AuthBase>
 </template>

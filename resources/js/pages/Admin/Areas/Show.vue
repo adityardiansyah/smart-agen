@@ -37,20 +37,44 @@ const props = defineProps<{
 
 const { can } = usePermission();
 
-// Add Region Dialog
-const showAddDialog = ref(false);
-const addForm = useForm({
+// Region Dialog
+const showDialog = ref(false);
+const editingRegion = ref<Region | null>(null);
+const form = useForm({
     city: '',
     region_sbm: '',
 });
 
-const submitAddRegion = () => {
-    addForm.post(route('admin.areas.regions.store', { area: props.area.data.id }), {
-        onSuccess: () => {
-            showAddDialog.value = false;
-            addForm.reset();
-        },
-    });
+const openAddDialog = () => {
+    editingRegion.value = null;
+    form.reset();
+    showDialog.value = true;
+};
+
+const openEditDialog = (region: Region) => {
+    editingRegion.value = region;
+    form.city = region.city;
+    form.region_sbm = region.region_sbm;
+    showDialog.value = true;
+};
+
+const submitRegion = () => {
+    if (editingRegion.value) {
+        form.put(route('admin.regions.update', { region: editingRegion.value.id }), {
+            onSuccess: () => {
+                showDialog.value = false;
+                form.reset();
+                editingRegion.value = null;
+            },
+        });
+    } else {
+        form.post(route('admin.areas.regions.store', { area: props.area.data.id }), {
+            onSuccess: () => {
+                showDialog.value = false;
+                form.reset();
+            },
+        });
+    }
 };
 
 // Delete Region Dialog
@@ -108,7 +132,7 @@ const confirmDelete = () => {
                             <CardTitle>Daftar Region</CardTitle>
                             <CardDescription>Kelola kabupaten/kota dalam area ini</CardDescription>
                         </div>
-                        <Button v-if="can('areas.edit')" @click="showAddDialog = true">
+                        <Button v-if="can('areas.edit')" @click="openAddDialog">
                             <Plus class="mr-2 h-4 w-4" />
                             Tambah Region
                         </Button>
@@ -132,6 +156,14 @@ const confirmDelete = () => {
                                 <TableCell class="text-right">
                                     <div class="flex items-center justify-end gap-2">
                                         <Button
+                                            v-if="can('areas.edit')"
+                                            variant="outline"
+                                            size="sm"
+                                            @click="openEditDialog(region)"
+                                        >
+                                            <Edit class="h-4 w-4" />
+                                        </Button>
+                                        <Button
                                             v-if="can('areas.delete')"
                                             variant="outline"
                                             size="sm"
@@ -154,7 +186,7 @@ const confirmDelete = () => {
                         <TableEmpty v-if="!area.data.regions || area.data.regions.length === 0">
                             <div class="py-8 text-center">
                                 <p class="mb-4 text-gray-500">Belum ada region untuk area ini</p>
-                                <Button v-if="can('areas.edit')" @click="showAddDialog = true">
+                                <Button v-if="can('areas.edit')" @click="openAddDialog">
                                     <Plus class="mr-2 h-4 w-4" />
                                     Tambah Region Pertama
                                 </Button>
@@ -209,46 +241,46 @@ const confirmDelete = () => {
             </Card>
         </div>
 
-        <!-- Add Region Dialog -->
-        <Dialog v-model:open="showAddDialog">
+        <!-- Region Dialog -->
+        <Dialog v-model:open="showDialog">
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Tambah Region Baru</DialogTitle>
+                    <DialogTitle>{{ editingRegion ? 'Edit Region' : 'Tambah Region Baru' }}</DialogTitle>
                     <DialogDescription>
-                        Tambahkan kabupaten/kota baru ke area {{ area.data.name }}
+                        {{ editingRegion ? 'Perbarui informasi region' : `Tambahkan kabupaten/kota baru ke area ${area.data.name}` }}
                     </DialogDescription>
                 </DialogHeader>
-                <form @submit.prevent="submitAddRegion" class="space-y-4">
+                <form @submit.prevent="submitRegion" class="space-y-4">
                     <div class="space-y-2">
                         <Label for="city">Kabupaten/Kota *</Label>
                         <Input
                             id="city"
-                            v-model="addForm.city"
+                            v-model="form.city"
                             placeholder="Contoh: Kota Palembang"
-                            :class="{ 'border-red-500': addForm.errors.city }"
+                            :class="{ 'border-red-500': form.errors.city }"
                         />
-                        <p v-if="addForm.errors.city" class="text-sm text-red-600">
-                            {{ addForm.errors.city }}
+                        <p v-if="form.errors.city" class="text-sm text-red-600">
+                            {{ form.errors.city }}
                         </p>
                     </div>
                     <div class="space-y-2">
                         <Label for="region_sbm">Wilayah SBM *</Label>
                         <Input
                             id="region_sbm"
-                            v-model="addForm.region_sbm"
+                            v-model="form.region_sbm"
                             placeholder="Contoh: Sumsel 1"
-                            :class="{ 'border-red-500': addForm.errors.region_sbm }"
+                            :class="{ 'border-red-500': form.errors.region_sbm }"
                         />
-                        <p v-if="addForm.errors.region_sbm" class="text-sm text-red-600">
-                            {{ addForm.errors.region_sbm }}
+                        <p v-if="form.errors.region_sbm" class="text-sm text-red-600">
+                            {{ form.errors.region_sbm }}
                         </p>
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" @click="showAddDialog = false">
+                        <Button type="button" variant="outline" @click="showDialog = false">
                             Batal
                         </Button>
-                        <Button type="submit" :disabled="addForm.processing">
-                            Simpan
+                        <Button type="submit" :disabled="form.processing">
+                            {{ editingRegion ? 'Perbarui' : 'Simpan' }}
                         </Button>
                     </DialogFooter>
                 </form>

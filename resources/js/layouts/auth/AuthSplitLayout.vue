@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
@@ -15,15 +14,17 @@ defineProps<{
 <template>
     <div class="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-            <div class="absolute inset-0 bg-zinc-900" />
-            <Link :href="route('home')" class="relative z-20 flex items-center text-lg font-medium">
-                <AppLogoIcon class="mr-2 size-8 fill-current text-white" />
-                {{ name }}
-            </Link>
-            <div v-if="quote" class="relative z-20 mt-auto">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-600 to-indigo-800" />
+            <div class="relative z-20 flex items-center text-lg font-medium">
+                <img src="/logo.png" alt="Logo" class="mr-2 size-10" />
+                Smart Agen
+            </div>
+            <div class="relative z-20 flex flex-1 items-center justify-center">
+                <img src="/img/ilu-login.svg" alt="Login Illustration" class="max-w-[50%]" />
+            </div>
+            <div class="relative z-20 mt-auto">
                 <blockquote class="space-y-2">
-                    <p class="text-lg">&ldquo;{{ quote.message }}&rdquo;</p>
-                    <footer class="text-sm text-neutral-300">{{ quote.author }}</footer>
+                    <p class="text-lg">&ldquo;Sistem Manajemen Distribusi LPG yang Efisien dan Terintegrasi.&rdquo;</p>
                 </blockquote>
             </div>
         </div>

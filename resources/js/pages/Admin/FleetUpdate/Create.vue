@@ -6,7 +6,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, Area } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ArrowLeft, ArrowRight, Plus, Check, AlertCircle } from 'lucide-vue-next';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 const props = defineProps<{
     page_setting: {
@@ -114,22 +114,31 @@ const removeDriverField = (index: number) => {
     form.drivers.splice(index, 1);
 };
 
+const searchAgencies = () => {
+    loadSelectedAgency();
+};
+
 // Step validation
-const validateStep = () => {
+const validateStep = (step: number) => {
     errors.value = {};
     successMessage.value = '';
     
-    if (currentStep.value === 1) {
+    if (step === 1) {
         if (!form.agency_id) {
             errors.value.agency_id = ['Silakan pilih agen terlebih dahulu'];
             return false;
         }
-    } else if (!filteredAgencies.value.length) {
+        
+        if (!filteredAgencies.value.length) {
             errors.value.agency_id = ['Agen tidak ditemukan. Silakan buat agen baru atau periksa kembali.'];
             return false;
         }
-    } else {
+        
         selectedAgency.value = filteredAgencies.value[0];
+    } else if (step === 2) {
+        return validateStep2();
+    } else if (step === 3) {
+        return validateStep3();
     }
     
     return true;
@@ -572,8 +581,6 @@ const goToStep = (step: number) => {
                                         {{ errors.drivers[`drivers.${index}.sim_document`].join(', ') }}
                                     </p>
                                 </div>
-                            </div>
-
                             <div class="flex items-center">
                                 <label class="flex items-center space-x-2">
                                     <input v-model="driver.is_active" type="checkbox" :id="`driver_is_active_${index}`" class="rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500" />

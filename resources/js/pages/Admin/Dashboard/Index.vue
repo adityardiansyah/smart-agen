@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Select } from '@/components/ui/select';
-import { can } from '@/composables/usePermission';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { Area, BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
-import { Building2, Package, TrendingUp, Truck, Users } from 'lucide-vue-next';
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Building2, ChevronRight, Edit, Eye, Package, TrendingUp, Truck, User, Users } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
-import { Eye } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import { Link } from '@inertiajs/vue3';
 
 const props = defineProps<{
     page_setting: {
@@ -29,9 +28,29 @@ const props = defineProps<{
             daily_allocation: number;
         } | null;
         agencies: any[];
-        latest_fleets: any[];
     };
 }>();
+
+const expandedAgencies = ref<number[]>([]);
+const expandedFleets = ref<number[]>([]);
+
+const toggleAgency = (id: number) => {
+    const index = expandedAgencies.value.indexOf(id);
+    if (index > -1) {
+        expandedAgencies.value.splice(index, 1);
+    } else {
+        expandedAgencies.value.push(id);
+    }
+};
+
+const toggleFleet = (id: number) => {
+    const index = expandedFleets.value.indexOf(id);
+    if (index > -1) {
+        expandedFleets.value.splice(index, 1);
+    } else {
+        expandedFleets.value.push(id);
+    }
+};
 
 const selectedArea = ref<number | null>(props.selectedAreaId);
 
@@ -177,71 +196,188 @@ const metricCards = computed(() => [
             </div>
 
             <!-- Summary Tables -->
-            <div v-if="metrics.area" class="grid grid-cols-1 gap-card-gap lg:grid-cols-2">
-                <!-- Latest Agencies -->
+            <div v-if="metrics.area" class="grid grid-cols-1">
                 <Card class="shadow-smart-card">
                     <CardHeader>
-                        <CardTitle class="text-h2 font-semibold">Daftar Agen</CardTitle>
-                        <CardDescription class="text-text-secondary">Agen LPG di wilayah ini</CardDescription>
+                        <CardTitle class="text-h2 font-semibold">Detail Agen</CardTitle>
+                        <CardDescription class="text-text-secondary">Lihat data agen, armada, dan supir secara hierarkis</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div class="relative overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="border-b bg-gray-50 text-xs uppercase text-gray-700">
-                                    <tr>
-                                        <th class="px-4 py-3">Nama Agen</th>
-                                        <th class="px-4 py-3">Alamat</th>
-                                        <th class="px-4 py-3">Armada</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="agency in metrics.agencies" :key="agency.id" class="border-b bg-white hover:bg-gray-50">
-                                        <td class="px-4 py-3 font-medium text-gray-900">{{ agency.name }}</td>
-                                        <td class="px-4 py-3">{{ agency.address }}</td>
-                                        <td class="px-4 py-3 text-center">{{ agency.fleets_count }}</td>
-                                    </tr>
-                                    <tr v-if="!metrics.agencies?.length">
-                                        <td colspan="3" class="px-4 py-8 text-center text-gray-500">Tidak ada data agen</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </CardContent>
-                </Card>
+                        <div class="rounded-md border bg-white">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead class="w-10"></TableHead>
+                                        <TableHead>Nama Agen</TableHead>
+                                        <TableHead>Alamat</TableHead>
+                                        <TableHead>Jumlah Armada</TableHead>
+                                        <TableHead>Jumlah Tabung</TableHead>
+                                        <TableHead>Alokasi Harian</TableHead>
+                                        <TableHead class="text-right">Aksi</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <template v-for="agency in metrics.agencies" :key="agency.id">
+                                        <TableRow class="hover:bg-muted/30">
+                                            <TableCell>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    class="h-8 w-8 p-0"
+                                                    @click="toggleAgency(agency.id)"
+                                                >
+                                                    <ChevronRight
+                                                        class="h-4 w-4 transition-transform duration-200"
+                                                        :class="{ 'rotate-90': expandedAgencies.includes(agency.id) }"
+                                                    />
+                                                </Button>
+                                            </TableCell>
+                                            <TableCell class="font-medium text-text-primary">{{ agency.name }}</TableCell>
+                                            <TableCell class="text-text-secondary">{{ agency.address }}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="secondary">{{ agency.fleets_count }} Armada</Badge>
+                                            </TableCell>
+                                            <TableCell>{{ agency.cylinder_count || 0 }}</TableCell>
+                                            <TableCell>{{ agency.daily_delivery || 0 }}</TableCell>
+                                            <TableCell class="text-right">
+                                                <Button variant="ghost" size="sm" as-child>
+                                                    <Link :href="route('admin.agencies.edit', { agency: agency.id })">
+                                                        <Edit class="mr-2 h-4 w-4" /> Edit
+                                                    </Link>
+                                                </Button>
+                                            </TableCell>
+                                        </TableRow>
 
-                <!-- Latest Fleets -->
-                <Card class="shadow-smart-card">
-                    <CardHeader>
-                        <CardTitle class="text-h2 font-semibold">Detail Armada</CardTitle>
-                        <CardDescription class="text-text-secondary">Armada terbaru di wilayah ini</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div class="relative overflow-x-auto">
-                            <table class="w-full text-left text-sm">
-                                <thead class="border-b bg-gray-50 text-xs uppercase text-gray-700">
-                                    <tr>
-                                        <th class="px-4 py-3">Nopol</th>
-                                        <th class="px-4 py-3">Agen</th>
-                                        <th class="px-4 py-3">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="fleet in metrics.latest_fleets" :key="fleet.id" class="border-b bg-white hover:bg-gray-50">
-                                        <td class="px-4 py-3 font-medium text-gray-900">{{ fleet.license_plate }}</td>
-                                        <td class="px-4 py-3">{{ fleet.agency?.name }}</td>
-                                        <td class="px-4 py-3">
-                                            <Button variant="outline" size="sm" as-child title="Lihat Detail">
-                                                <Link :href="route('admin.fleets.show', fleet)">
-                                                    <Eye class="h-4 w-4" /> Lihat Detail
-                                                </Link>
-                                            </Button>
+                                        <!-- Fleets Nested Table -->
+                                        <TableRow v-if="expandedAgencies.includes(agency.id)">
+                                            <TableCell colspan="7" class="bg-muted/20 p-0">
+                                                <div class="p-6 pl-12">
+                                                    <h4 class="mb-4 flex items-center gap-2 text-sm font-semibold text-text-secondary">
+                                                        <Truck class="h-4 w-4 text-brand-secondary" />
+                                                        Daftar Armada - {{ agency.name }}
+                                                    </h4>
+                                                    <div class="rounded-lg border bg-white shadow-sm overflow-hidden">
+                                                        <Table>
+                                                            <TableHeader class="bg-gray-50/50">
+                                                                <TableRow>
+                                                                    <TableHead class="w-10"></TableHead>
+                                                                    <TableHead>No. Plat</TableHead>
+                                                                    <TableHead>Tahun</TableHead>
+                                                                    <TableHead>Status KEUR</TableHead>
+                                                                    <TableHead>Status STNK</TableHead>
+                                                                    <TableHead class="text-right">Aksi</TableHead>
+                                                                </TableRow>
+                                                            </TableHeader>
+                                                            <TableBody>
+                                                                <template v-for="fleet in agency.fleets" :key="fleet.id">
+                                                                    <TableRow class="hover:bg-muted/30">
+                                                                        <TableCell>
+                                                                            <Button
+                                                                                variant="ghost"
+                                                                                size="sm"
+                                                                                class="h-6 w-6 p-0"
+                                                                                @click="toggleFleet(fleet.id)"
+                                                                            >
+                                                                                <ChevronRight
+                                                                                    class="h-4 w-4 transition-transform duration-200"
+                                                                                    :class="{ 'rotate-90': expandedFleets.includes(fleet.id) }"
+                                                                                />
+                                                                            </Button>
+                                                                        </TableCell>
+                                                                        <TableCell class="font-medium">{{ fleet.license_plate }}</TableCell>
+                                                                        <TableCell>{{ fleet.year_manufacture }}</TableCell>
+                                                                        <TableCell>
+                                                                            <Badge :variant="fleet.keur_status === 'NOT EXPIRED' ? 'default' : 'destructive'">
+                                                                                {{ fleet.keur_status || 'N/A' }}
+                                                                            </Badge>
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                             <Badge :variant="fleet.stnk_status === 'NOT EXPIRED' ? 'default' : 'destructive'">
+                                                                                {{ fleet.stnk_status || 'N/A' }}
+                                                                            </Badge>
+                                                                        </TableCell>
+                                                                        <TableCell class="text-right">
+                                                                            <Button variant="ghost" size="sm" as-child>
+                                                                                <Link :href="route('admin.fleets.edit', fleet.id)">
+                                                                                    <Edit class="h-4 w-4" />
+                                                                                </Link>
+                                                                            </Button>
+                                                                        </TableCell>
+                                                                    </TableRow>
+
+                                                                    <!-- Drivers Nested Table -->
+                                                                    <TableRow v-if="expandedFleets.includes(fleet.id)">
+                                                                        <TableCell colspan="6" class="bg-muted/10 p-4 pl-12">
+                                                                            <div class="flex items-center gap-2 mb-3 text-xs font-semibold uppercase tracking-wider text-text-secondary">
+                                                                                <Users class="h-3 w-3" />
+                                                                                Tim Supir
+                                                                            </div>
+                                                                            <div class="rounded-md border bg-white overflow-hidden">
+                                                                                <Table>
+                                                                                    <TableHeader class="bg-gray-50/50">
+                                                                                        <TableRow>
+                                                                                            <TableHead>Nama Supir</TableHead>
+                                                                                            <TableHead>Umur</TableHead>
+                                                                                            <TableHead>Expired SIM</TableHead>
+                                                                                            <TableHead>Status SIM</TableHead>
+                                                                                            <TableHead>Status</TableHead>
+                                                                                            <TableHead class="text-right">Aksi</TableHead>
+                                                                                        </TableRow>
+                                                                                    </TableHeader>
+                                                                                    <TableBody>
+                                                                                        <TableRow v-for="driver in fleet.drivers" :key="driver.id" class="hover:bg-muted/30">
+                                                                                            <TableCell class="font-medium">{{ driver.name }}</TableCell>
+                                                                                            <TableCell>{{ driver.age }} Tahun</TableCell>
+                                                                                            <TableCell>{{ driver.sim_expiry_date || '-' }}</TableCell>
+                                                                                            <TableCell>
+                                                                                                <Badge :variant="driver.sim_status === 'NOT EXPIRED' ? 'default' : 'destructive'">
+                                                                                                    {{ driver.sim_status || 'N/A' }}
+                                                                                                </Badge>
+                                                                                            </TableCell>
+                                                                                            <TableCell>
+                                                                                                <Badge :variant="driver.is_active ? 'default' : 'secondary'">
+                                                                                                    {{ driver.is_active ? 'Aktif' : 'Non-aktif' }}
+                                                                                                </Badge>
+                                                                                            </TableCell>
+                                                                                            <TableCell class="text-right">
+                                                                                                <Button variant="ghost" size="sm" as-child>
+                                                                                                    <Link :href="route('admin.drivers.edit', driver.id)">
+                                                                                                        <Edit class="h-4 w-4" />
+                                                                                                    </Link>
+                                                                                                </Button>
+                                                                                            </TableCell>
+                                                                                        </TableRow>
+                                                                                        <TableRow v-if="!fleet.drivers?.length">
+                                                                                            <TableCell colspan="6" class="py-4 text-center text-muted-foreground italic">
+                                                                                                Belum ada supir terdaftar
+                                                                                            </TableCell>
+                                                                                        </TableRow>
+                                                                                    </TableBody>
+                                                                                </Table>
+                                                                            </div>
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                </template>
+                                                                <TableRow v-if="!agency.fleets?.length">
+                                                                    <TableCell colspan="6" class="py-10 text-center text-muted-foreground italic">
+                                                                        Tidak ada armada terdaftar di agen ini
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            </TableBody>
+                                                        </Table>
+                                                    </div>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    </template>
+                                    <TableRow v-if="!metrics.agencies?.length">
+                                        <td colspan="7" class="py-20 text-center text-text-secondary">
+                                            <Building2 class="mx-auto mb-4 h-12 w-12 text-gray-200" />
+                                            <p class="text-lg font-medium">Data agen tidak ditemukan</p>
                                         </td>
-                                    </tr>
-                                    <tr v-if="!metrics.latest_fleets?.length">
-                                        <td colspan="3" class="px-4 py-8 text-center text-gray-500">Tidak ada data armada</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
                         </div>
                     </CardContent>
                 </Card>

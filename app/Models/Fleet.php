@@ -86,7 +86,15 @@ class Fleet extends Model
 
         $vehicleAge = now()->year - $this->year_manufacture;
 
-        return $vehicleAge >= 9 ? 'NEAR EXPIRED' : 'NOT EXPIRED';
+        if ($vehicleAge <= 8) {
+            return 'NOT EXPIRED';
+        }
+
+        if ($vehicleAge <= 10) {
+            return 'NEAR EXPIRY';
+        }
+
+        return 'EXPIRED';
     }
 
     public function getVehicleAgeAttribute(): int

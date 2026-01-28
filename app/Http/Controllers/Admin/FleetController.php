@@ -46,13 +46,17 @@ class FleetController extends Controller
                     $query->keurExpiring();
                 } elseif ($status === 'not_expired') {
                     $query->where('keur_expiry', '>', now()->addDays(60));
+                } elseif ($status === 'expired') {
+                    $query->where('keur_expiry', '<=', now());
                 }
             })
             ->when($request->vehicle_age_status, function ($query, $status) {
-                if ($status === 'near_expired') {
-                    $query->oldVehicle();
+                if ($status === 'near_expiry') {
+                    $query->whereBetween('year_manufacture', [now()->subYears(10)->year, now()->subYears(9)->year]);
                 } elseif ($status === 'not_expired') {
-                    $query->where('year_manufacture', '>=', now()->subYears(9)->year);
+                    $query->where('year_manufacture', '>=', now()->subYears(8)->year);
+                } elseif ($status === 'expired') {
+                    $query->where('year_manufacture', '<', now()->subYears(10)->year);
                 }
             })
             ->when($request->status, function ($query, $status) {
@@ -87,11 +91,9 @@ class FleetController extends Controller
                         'expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('stnk_expiry', '<=', now())->count(),
                     ],
                     'vehicle_age' => [
-                        'not_expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('year_manufacture', '>=', now()->subYears(9)->year)->count(),
-                        // 'near_expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->oldVehicle(9)->count(), // Definition of near expired vs expired for age needs clarification, for now simplified based on model scopes if available or direct logic
-                        // Assuming 'oldVehicle' means near expired/expired based on context, let's stick to the basic counts for now or refine logic.
-                        // Let's use > 9 years as expired/warning.
-                        'expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('year_manufacture', '<', now()->subYears(9)->year)->count(),
+                        'not_expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('year_manufacture', '>=', now()->subYears(8)->year)->count(),
+                        'near_expiry' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->whereBetween('year_manufacture', [now()->subYears(10)->year, now()->subYears(9)->year])->count(),
+                        'expired' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('year_manufacture', '<', now()->subYears(10)->year)->count(),
                     ],
                     'status' => [
                         'active' => Fleet::whereHas('agency', fn($q) => $q->whereIn('area_id', $accessibleAreas->pluck('id')))->where('is_active', true)->count(),

@@ -36,7 +36,7 @@ const props = defineProps<{
         stats: {
             keur: { not_expired: number; near_expiry: number; expired: number };
             stnk: { not_expired: number; near_expiry: number; expired: number };
-            vehicle_age: { not_expired: number; expired: number };
+            vehicle_age: { not_expired: number; near_expiry: number; expired: number };
             status: { active: number; inactive: number; total: number };
         };
     };
@@ -92,18 +92,18 @@ const getKeurStatusColor = (status: string) => {
         case 'NOT EXPIRED':
             return 'bg-green-100 text-green-800';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-red-100 text-red-800';
     }
 };
 
 const getVehicleAgeStatusColor = (status: string) => {
     switch (status) {
-        case 'NEAR EXPIRED':
+        case 'NEAR EXPIRY':
             return 'bg-orange-100 text-orange-800';
         case 'NOT EXPIRED':
             return 'bg-green-100 text-green-800';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-red-100 text-red-800';
     }
 };
 </script>
@@ -152,14 +152,9 @@ const getVehicleAgeStatusColor = (status: string) => {
                     </SummarySection>
                     
                     <SummarySection title="Status Umur Kendaraan" :icon="Calendar">
-                        <SummaryCard title="Masa Pakai Ideal" :count="page_data.stats.vehicle_age.not_expired" :icon="CheckCircle" variant="success" />
-                        <SummaryCard title="Perlu Peremajaan" :count="page_data.stats.vehicle_age.expired" :icon="AlertCircle" variant="destructive" />
-                    </SummarySection>
-
-                    <SummarySection title="Status Armada" :icon="Truck">
-                        <SummaryCard title="Total Armada" :count="page_data.stats.status.total" :icon="Truck" />
-                        <SummaryCard title="Aktif" :count="page_data.stats.status.active" :icon="CheckCircle" variant="success" />
-                        <SummaryCard title="Non-aktif" :count="page_data.stats.status.inactive" :icon="XCircle" variant="destructive" />
+                        <SummaryCard title="Not Expired" :count="page_data.stats.vehicle_age.not_expired" :icon="CheckCircle" variant="success" />
+                        <SummaryCard title="Near Expiry" :count="page_data.stats.vehicle_age.near_expiry" :icon="Clock" variant="warning" />
+                        <SummaryCard title="Expired" :count="page_data.stats.vehicle_age.expired" :icon="AlertCircle" variant="destructive" />
                     </SummarySection>
                 </div>
 
@@ -224,7 +219,7 @@ const getVehicleAgeStatusColor = (status: string) => {
                             <TableHead>Agen</TableHead>
                             <TableHead>Tahun</TableHead>
                             <TableHead>Status KEUR</TableHead>
-                            <TableHead>Status Usia</TableHead>
+                            <TableHead>Status Usia Armada</TableHead>
                             <TableHead>Supir</TableHead>
                             <TableHead class="text-right">Aksi</TableHead>
                         </TableRow>

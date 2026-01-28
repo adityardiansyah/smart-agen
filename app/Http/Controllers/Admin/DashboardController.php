@@ -88,10 +88,51 @@ class DashboardController extends Controller
                 'driver_count' => $driverCount,
                 'daily_allocation' => $dailyAllocation,
             ],
-            'agencies' => Agency::where('area_id', $areaId)->withCount('fleets')->orderBy('name')->take(5)->get(),
-            'latest_fleets' => Fleet::whereHas('agency', function ($query) use ($areaId) {
-                $query->where('area_id', $areaId);
-            })->with(['agency', 'drivers'])->latest()->take(5)->get(),
+            'agencies' => Agency::where('area_id', $areaId)
+                ->with([
+                    'fleets.drivers',
+                    'fleets' => function ($query) {
+                        $query->orderBy('license_plate');
+                    }
+                ])
+                ->withCount('fleets')
+                ->orderBy('name')
+                ->get()
+                ->map(function ($agency) {
+                    return [
+                        'id' => $agency->id,
+                        'name' => $agency->name,
+                        'address' => $agency->address,
+                        'cylinder_count' => $agency->cylinder_count,
+                        'daily_delivery' => $agency->daily_delivery,
+                        'fleets_count' => $agency->fleets_count,
+                        'fleets' => $agency->fleets->map(function ($fleet) {
+                            return [
+                                'id' => $fleet->id,
+                                'license_plate' => $fleet->license_plate,
+                                'year_manufacture' => $fleet->year_manufacture,
+                                'keur_number' => $fleet->keur_number,
+                                'keur_expiry_date' => $fleet->keur_expiry ? $fleet->keur_expiry->format('d/m/Y') : '-',
+                                'keur_status' => $fleet->keur_status ? $fleet->keur_status : '-',
+                                'stnk_expiry_date' => $fleet->stnk_expiry ? $fleet->stnk_expiry->format('d/m/Y') : '-',
+                                'stnk_status' => $fleet->stnk_status ? $fleet->stnk_status : '-',
+                                'vehicle_expiry' => $fleet->vehicle_expiry ? $fleet->vehicle_expiry->format('d/m/Y') : '-',
+                                'vehicle_age_status' => $fleet->vehicle_age_status ? $fleet->vehicle_age_status : '-',
+                                'is_active' => $fleet->is_active,
+                                'drivers' => $fleet->drivers->map(function ($driver) {
+                                    return [
+                                        'id' => $driver->id,
+                                        'name' => $driver->name,
+                                        'age' => $driver->age,
+                                        'sim_expiry_date' => $driver->sim_expiry ? $driver->sim_expiry->format('d/m/Y') : '-',
+                                        'sim_status' => $driver->sim_status,
+                                        'is_active' => $driver->is_active,
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ];
+                }),
         ];
     }
 

@@ -12,7 +12,7 @@ import { usePermission } from '@/composables/usePermission';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, Fleet, Region } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Plus, User, History, Truck, Building2, FileText, Image } from 'lucide-vue-next';
+import { ArrowLeft, Plus, User, History, Truck, Building2, FileText, Image, Eye } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 
 interface Driver {
@@ -277,14 +277,21 @@ const openDocumentPreview = (title: string, url: string) => {
                             <Badge :class="getSimStatusColor(activeDriver.sim_status || 'NOT EXPIRED')">
                                 {{ activeDriver.sim_status || 'NOT EXPIRED' }}
                             </Badge>
-                            <Button
-                                v-if="activeDriver.sim_document_url"
-                                variant="outline"
-                                size="sm"
-                                @click="openDocumentPreview('Dokumen SIM - ' + activeDriver.name, activeDriver.sim_document_url)"
-                            >
-                                <Image class="mr-2 h-4 w-4" /> Lihat SIM
-                            </Button>
+                            <div class="flex gap-2">
+                                <Button
+                                    v-if="activeDriver.sim_document_url"
+                                    variant="outline"
+                                    size="sm"
+                                    @click="openDocumentPreview('Dokumen SIM - ' + activeDriver.name, activeDriver.sim_document_url)"
+                                >
+                                    <Image class="mr-2 h-4 w-4" /> Lihat SIM
+                                </Button>
+                                <Button variant="secondary" size="sm" as-child>
+                                    <Link :href="route('admin.drivers.show', { driver: activeDriver.id })">
+                                        <Eye class="mr-2 h-4 w-4" /> Detail
+                                    </Link>
+                                </Button>
+                            </div>
                         </div>
                     </div>
                     <div v-else class="p-8 text-center border-2 border-dashed rounded-lg">
@@ -316,6 +323,7 @@ const openDocumentPreview = (title: string, url: string) => {
                                 <TableHead>Masa Berlaku SIM</TableHead>
                                 <TableHead>Tanggal Ditugaskan</TableHead>
                                 <TableHead>Tanggal Berakhir</TableHead>
+                                <TableHead class="text-right">Aksi</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -325,6 +333,13 @@ const openDocumentPreview = (title: string, url: string) => {
                                 <TableCell>{{ driver.sim_expiry }}</TableCell>
                                 <TableCell>{{ driver.assigned_at || '-' }}</TableCell>
                                 <TableCell>{{ driver.deactivated_at || '-' }}</TableCell>
+                                <TableCell class="text-right">
+                                    <Button variant="ghost" size="sm" as-child>
+                                        <Link :href="route('admin.drivers.show', { driver: driver.id })">
+                                            <Eye class="h-4 w-4" />
+                                        </Link>
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         </TableBody>
                         <TableEmpty v-if="driverHistory.length === 0">

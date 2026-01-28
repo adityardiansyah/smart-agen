@@ -140,11 +140,22 @@ class DriverController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Driver $driver): JsonResource
+    public function show(Driver $driver): InertiaResponse
     {
         $driver->load(['fleet.agency.area']);
 
-        return new DriverResource($driver);
+        return Inertia::render('Admin/Drivers/Show', [
+            'page_setting' => [
+                'title' => "Detail Supir - {$driver->name}",
+                'subtitle' => 'Lihat detail informasi supir',
+                'breadcrumbs' => [
+                    ['title' => 'Dashboard', 'href' => route('admin.dashboard.index')],
+                    ['title' => 'Drivers', 'href' => route('admin.drivers.index')],
+                    ['title' => $driver->name, 'href' => route('admin.drivers.show', $driver)],
+                ],
+            ],
+            'driver' => new DriverResource($driver),
+        ]);
     }
 
     /**

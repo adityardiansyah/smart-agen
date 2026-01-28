@@ -12,7 +12,7 @@ import { usePermission } from '@/composables/usePermission';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, Fleet, Region } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ArrowLeft, Plus, User, History, Truck, Building2 } from 'lucide-vue-next';
+import { ArrowLeft, Plus, User, History, Truck, Building2, FileText, Image } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 
 interface Driver {
@@ -21,6 +21,8 @@ interface Driver {
     age: number;
     sim_expiry: string;
     sim_status?: string;
+    sim_document?: string;
+    sim_document_url?: string;
     assigned_at?: string;
     deactivated_at?: string;
 }
@@ -97,6 +99,17 @@ const getSimStatusColor = (status: string) => {
         default:
             return 'bg-gray-100 text-gray-800';
     }
+};
+
+// Document Preview Modal
+const showDocumentModal = ref(false);
+const documentModalTitle = ref('');
+const documentModalUrl = ref('');
+
+const openDocumentPreview = (title: string, url: string) => {
+    documentModalTitle.value = title;
+    documentModalUrl.value = url;
+    showDocumentModal.value = true;
 };
 </script>
 
@@ -195,6 +208,30 @@ const getSimStatusColor = (status: string) => {
                             <span class="font-medium">{{ fleet.data.stnk_expiry }}</span>
                         </div>
                         <div class="flex justify-between items-center">
+                            <span class="text-muted-foreground">Dokumen KEUR:</span>
+                            <Button
+                                v-if="fleet.data.keur_document_url"
+                                variant="outline"
+                                size="sm"
+                                @click="openDocumentPreview('Dokumen KEUR', fleet.data.keur_document_url)"
+                            >
+                                <Image class="mr-2 h-4 w-4" /> Lihat Dokumen
+                            </Button>
+                            <span v-else class="text-sm text-muted-foreground italic">Tidak ada</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-muted-foreground">Dokumen STNK:</span>
+                            <Button
+                                v-if="fleet.data.stnk_document_url"
+                                variant="outline"
+                                size="sm"
+                                @click="openDocumentPreview('Dokumen STNK', fleet.data.stnk_document_url)"
+                            >
+                                <Image class="mr-2 h-4 w-4" /> Lihat Dokumen
+                            </Button>
+                            <span v-else class="text-sm text-muted-foreground italic">Tidak ada</span>
+                        </div>
+                        <div class="flex justify-between items-center">
                             <span class="text-muted-foreground">Status Usia:</span>
                             <Badge :class="fleet.data.vehicle_age_status === 'NEAR EXPIRED' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'">
                                 {{ fleet.data.vehicle_age_status }}
@@ -240,6 +277,14 @@ const getSimStatusColor = (status: string) => {
                             <Badge :class="getSimStatusColor(activeDriver.sim_status || 'NOT EXPIRED')">
                                 {{ activeDriver.sim_status || 'NOT EXPIRED' }}
                             </Badge>
+                            <Button
+                                v-if="activeDriver.sim_document_url"
+                                variant="outline"
+                                size="sm"
+                                @click="openDocumentPreview('Dokumen SIM - ' + activeDriver.name, activeDriver.sim_document_url)"
+                            >
+                                <Image class="mr-2 h-4 w-4" /> Lihat SIM
+                            </Button>
                         </div>
                     </div>
                     <div v-else class="p-8 text-center border-2 border-dashed rounded-lg">
@@ -377,6 +422,35 @@ const getSimStatusColor = (status: string) => {
                         </Button>
                     </DialogFooter>
                 </form>
+            </DialogContent>
+        </Dialog>
+
+        <!-- Document Preview Modal -->
+        <Dialog v-model:open="showDocumentModal">
+            <DialogContent class="max-w-3xl">
+                <DialogHeader>
+                    <DialogTitle>{{ documentModalTitle }}</DialogTitle>
+                    <DialogDescription>
+                        Pratinjau dokumen
+                    </DialogDescription>
+                </DialogHeader>
+                <div class="flex items-center justify-center p-4 bg-gray-50 rounded-lg min-h-[400px]">
+                    <img 
+                        :src="documentModalUrl" 
+                        :alt="documentModalTitle"
+                        class="max-w-full max-h-[60vh] object-contain rounded-md shadow-sm"
+                    />
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" @click="showDocumentModal = false">
+                        Tutup
+                    </Button>
+                    <Button as-child>
+                        <a :href="documentModalUrl" target="_blank" rel="noopener noreferrer">
+                            Buka di Tab Baru
+                        </a>
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     </AppLayout>

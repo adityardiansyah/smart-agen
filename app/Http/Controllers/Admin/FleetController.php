@@ -206,6 +206,8 @@ class FleetController extends Controller
                 'age' => $activeDriver->age,
                 'sim_expiry' => $activeDriver->sim_expiry?->format('Y-m-d'),
                 'sim_status' => $activeDriver->sim_status,
+                'sim_document' => $activeDriver->sim_document,
+                'sim_document_url' => $activeDriver->sim_document ? asset('storage/' . $activeDriver->sim_document) : null,
                 'assigned_at' => $activeDriver->assigned_at?->format('Y-m-d H:i'),
             ] : null,
             'driverHistory' => $driverHistory->map(function ($driver) {

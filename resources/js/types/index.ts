@@ -196,6 +196,10 @@ export interface Fleet {
     keur_expiry: string;
     stnk_expiry: string;
     vehicle_expiry: string;
+    keur_document?: string;
+    keur_document_url?: string;
+    stnk_document?: string;
+    stnk_document_url?: string;
     is_active: boolean;
     keur_status: string;
     vehicle_age_status: string;
